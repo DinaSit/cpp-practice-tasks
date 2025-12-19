@@ -12,7 +12,7 @@
 
 ### Пример
 ```c++
-nt array[5]{1, 2, 3, 3, 5};
+int array[5]{1, 2, 3, 3, 5};
 
 BinarySearch(array + 3, array + 4, 2); // false
 
