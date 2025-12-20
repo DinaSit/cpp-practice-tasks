@@ -9,7 +9,6 @@ template <class T>
 class UniquePtr {
     T* ptr_;
 
-
 public:
     // конструктор по умолчанию
     UniquePtr() : ptr_(nullptr) {}
