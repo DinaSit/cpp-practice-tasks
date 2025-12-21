@@ -2,7 +2,6 @@
 Репозиторий содержит набор самостоятельных реализаций на C++, охватывающих ключевые механизмы языка и его библиотек.
 
 ### template-functions
-Содержит:
 * Шаблонные функции для работы с отсортированными последовательностями: BinarySearch, LowerBound, UpperBound;
 * Библиотека функицй `cstring`: Strlen, Strcmp, Strncmp, Strchr, Strrchr, Strspn, Strcspn, Strpbrk, Strstr, Strcpy, Strncpy, Strcat, Strncat;
 * Реализация шаблонной функции Copy и функции CopyBackward;
@@ -13,7 +12,6 @@
 * Реализация шаблонной функции Unique.
 
 ### implementation-classes
-Содержит:
 * Упрощенный аналог класса `std::any` с механизмом "type erasure" (стирание типов);
 * Упрощенный аналог `std::array`. С помощью механизма перегрузки шаблонов реализованы функции для извлечения свойств C-style массивов: GetSize, GetRank, GetNumElements;
 * Класс для работы с рациональными числами Rational;
