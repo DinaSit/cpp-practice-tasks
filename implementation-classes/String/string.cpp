@@ -37,7 +37,7 @@ String::String(String&& other) noexcept : str_(other.str_), size_(other.size_), 
     other.str_ = nullptr;
     other.size_ = other.capacity_ = 0;
 }
-// // Копирующее присваивание
+// Копирующее присваивание
 String& String::operator=(const String& other) noexcept {
     if (this != &other) {
         auto copy = other;
@@ -45,7 +45,7 @@ String& String::operator=(const String& other) noexcept {
     }
     return *this;
 }
-// // Перемещающее присваивание
+// Перемещающее присваивание
 String& String::operator=(String&& other) noexcept {
     auto copy = std::move(other);
     Swap(copy);
