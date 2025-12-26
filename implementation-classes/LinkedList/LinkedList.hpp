@@ -34,7 +34,7 @@ public:
   }
 
   // добавить в конец O(1)
-  push_back(const T& val) {
+  void push_back(const T& val) {
     Node* new_node = new Node(val);
     if (!head_) {
       head_ = tail_ = new_node;
@@ -45,7 +45,7 @@ public:
   }
 
   // удалить с конца O(n)
-  pop_back() {
+  void pop_back() {
     if (!head_) {
       return;
     }
@@ -66,7 +66,7 @@ public:
   }
 
   // добавить в начало O(1)
-  push_front(const T& val) {
+  void push_front(const T& val) {
     Node* new_node = new Node(val, head_);
     head_ = new_node;
     if (!tail_) {
@@ -75,7 +75,7 @@ public:
   }
 
   // удалить с начала O(1)
-  pop_front() {
+  void pop_front() {
     if (!head_) {
       return;
     }
