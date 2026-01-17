@@ -43,6 +43,7 @@ public:
   Any(Any&& other) noexcept = default;
 
   // шаблонный конструктор от произвольного типа
+  template <class T>
   Any(const T& value) : ptr_(std::make_unique<AnyHolder<T>>(value)) { // NOLINT
   }
 
@@ -58,6 +59,7 @@ public:
   Any& operator=(Any&& other) noexcept = default;
 
   // шаблонный оператор присваивания
+  template <class T>
   Any& operator=(const T& value) {
     ptr_ = std::make_unique<AnyHolder<T>>(value);
     return *this;
@@ -77,6 +79,7 @@ public:
     return ptr_ != nullptr;
   }
 
+  template <class T>
   friend T AnyCast(const Any& any);
 };
 
