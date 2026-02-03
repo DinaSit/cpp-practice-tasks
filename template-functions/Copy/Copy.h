@@ -3,6 +3,7 @@
 
 template <class T1, class T2>
 T2* Copy(const T1* src_begin, const T1* src_end, T2* dest) {
+    if (!src_begin || !src_end || !dest) return dest;
     while (src_begin != src_end) {
         *dest = *src_begin;
         ++src_begin;
@@ -13,6 +14,7 @@ T2* Copy(const T1* src_begin, const T1* src_end, T2* dest) {
 
 template <class T1, class T2>
 T2* CopyBackward(const T1* src_begin, const T1* src_end, T2* dest) {
+    if (!src_begin || !src_end || !dest) return dest;
     while (src_end != src_begin) {
         --src_end;
         --dest;
