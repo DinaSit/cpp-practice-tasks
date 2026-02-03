@@ -3,6 +3,7 @@
 
 template <class T>
 T* Unique(T* first, T* last) {
+    if (!first || !last) { return last; }
     if (first == last) { return last; }
 
     T* write = first + 1;
