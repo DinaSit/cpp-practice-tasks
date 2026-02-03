@@ -3,9 +3,10 @@
 
 template <class T>
 void Reverse(T* src_begin, T* src_end) {
+    if (!src_begin || !src_end) return;
     while (src_begin < src_end) {
         --src_end;
-        if (src_begin >= src_end) { break; }
+        if (src_begin >= src_end) break;
 
         T temp = *src_begin;
         *src_begin = *src_end;
@@ -16,7 +17,8 @@ void Reverse(T* src_begin, T* src_end) {
 
 template <class T>
 void Rotate(T* begin, T* mid, T* end) {
-    if (begin == mid || mid == end) { return; }
+    if (!begin || !mid || !end) return;
+    if (begin == mid || mid == end) return;
 
     Reverse(begin, mid);
     Reverse(mid, end);
