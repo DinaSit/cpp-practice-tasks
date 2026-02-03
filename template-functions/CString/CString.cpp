@@ -9,25 +9,38 @@ static bool InSet(char c, const char* set) {
 
 // Returns the length of the C string str
 size_t Strlen(const char* str) {
+    if (!str) return 0;
     const char* last = str;
-    while (*last) { ++last; }
+    while (*last) ++last;
     return static_cast<size_t>(last - str);
 }
 
 // Compares the C string first to the C string second
 int Strcmp(const char* first, const char* second) {
-    while (*first && *first == *second) { ++first; ++second; }
-    return static_cast<unsigned char>(*first) - *second;
+    if (!first || !second) {
+        if (first == second) return 0;
+        return first ? 1 : -1;
+    }
+    while (*first && *second && *first == *second) { ++first; ++second; }
+    return static_cast<unsigned char>(*first) - static_cast<unsigned char>(*second);
 }
 
 // Compares up to count characters of the C string first to those of the C string second
 int Strncmp(const char* first, const char* second, size_t count) {
     if (count == 0) { return 0; }
-    while (count-- && *first && (*first == *second)) { 
-        if (count == 0) { return 0; }
-        ++first; ++second;
+    if (!first || !second) {
+        if (first == second) return 0;
+        return first ? 1 : -1;
     }
-    return static_cast<unsigned char>(*first) - *second;
+
+    while (count && *first && *second && (*first == *second)) {
+        ++first;
+        ++second;
+        --count;
+    }
+
+    if (count == 0) return 0;
+    return static_cast<unsigned char>(*first) - static_cast<unsigned char>(*second);
 }
 
 // Returns a pointer to the first occurrence of symbol in the C string str
@@ -114,6 +127,6 @@ char* Strncat(char* dest, const char* src, size_t count) {
     char* d = dest;
     while (*d) { ++d; }
     while (count && *src) { *d++ = *src++; --count; }
-    *d = '\0'; // ensure NUL-termination
+    *d = '\0';
     return dest;
 }
