@@ -4,7 +4,6 @@
 template <class T1, class T2, class OUT>
 OUT* Merge(const T1* first_begin, const T1* first_end, const T2* second_begin, const T2* second_end, OUT* out) {
     if (!out) return out;
-    // Если диапазон НЕ пустой, но указатели nullptr — ничего не делаем
     if (first_begin != first_end && (!first_begin || !first_end)) return out;
     if (second_begin != second_end && (!second_begin || !second_end)) return out;
 
