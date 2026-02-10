@@ -5,10 +5,7 @@ String::String() : str_(nullptr), size_(0), capacity_(0) {
 }
 
 // Конструктор, принимающий size и symbol, — создает строку длины size, заполненную символами symbol;
-String::String(size_t size, char symbol) : str_(nullptr), size_(0), capacity_(0) {
-    if (size == 0) { return; }
-    str_ = new char[size + 1];
-    size_ = capacity_ = size;
+String::String(size_t size, char symbol) : str_(new char[size + 1]), size_(size), capacity_(size) {
     for (size_t i = 0; i < size; ++i) {
         str_[i] = symbol;
     }
@@ -16,14 +13,10 @@ String::String(size_t size, char symbol) : str_(nullptr), size_(0), capacity_(0)
 }
 
 // Конструктор, принимающий массив char (const char*) и количество первых символов (size), которые нужно скопировать;
-String::String(const char* c_str, size_t size) : str_(nullptr), size_(0), capacity_(0) {
-    if (size == 0) { return; }
-    str_ = new char[size + 1];
+String::String(const char* c_str, size_t size) : str_(new char[size + 1]), size_(size), capacity_(size) {
     std::strncpy(str_, c_str, size);
     str_[size] = '\0';
-    size_ = capacity_ = size;
 }
-// Done
 // Конструктор, принимающий С-style строку (const char*) и создающий на ее основе строку
 String::String(const char* c_str) : String(c_str, std::strlen(c_str)) { // NOLINT
 }
@@ -87,8 +80,8 @@ void String::PushBack(char symbol) {
 String& String::operator+=(const String& rhs) {
     if (rhs.size_ == 0) { return *this; }
 
-    size_t n = size_ + rhs.size_;
-    while (n >= capacity_) {
+    const size_t n = size_ + rhs.size_;
+    while (n > capacity_) {
         Reserve(capacity_ == 0 ? 1 : capacity_ * 2);
     }
 
@@ -97,15 +90,15 @@ String& String::operator+=(const String& rhs) {
         for (size_t i = 0; i < old; ++i) {
             str_[old + i] = str_[i];
         }
-        size_ += old;
+        size_ = n;
     } else {
         for (size_t i = 0; i < rhs.size_; ++i) {
             str_[size_ + i] = rhs.str_[i];
         }
-        size_ += rhs.size_;
+        size_ = n;
     }
-    str_[size_] = '\0';
 
+    str_[size_] = '\0';
     return *this;
 }
 
@@ -113,16 +106,21 @@ String& String::operator+=(const String& rhs) {
 // то выделяется новый буфер с вместимостью new_size. 
 // В случае new_size > size заполняет недостающие символы значением symbol;
 void String::Resize(size_t new_size, char symbol) {
+    if (new_size <= size_) {
+        size_ = new_size;
+        if (str_) {
+            str_[size_] = '\0';
+        }
+        return;
+    }
+
     if (new_size > capacity_) {
+        auto new_str = new char[new_size + 1];
+        for (size_t i = 0; i < size_; ++i) new_str[i] = str_[i];
+        delete[] str_;
+        str_ = new_str;
         capacity_ = new_size;
     }
-    auto new_str = new char[capacity_ + 1];
-    for (size_t i = 0; i < size_; ++i) {
-        new_str[i] = str_[i];
-    }
-    new_str[size_] = '\0';
-    delete[] str_;
-    str_ = new_str;
 
     for (size_t i = size_; i < new_size; ++i) {
         str_[i] = symbol;
@@ -144,14 +142,6 @@ void String::Reserve(size_t new_capacity) {
 }
 // уменьшает capacity до size (убирает излишек);
 void String::ShrinkToFit() {
-    // if (capacity_ < size_ + 1) { return; }
-    // if (size_ == 0) {
-    //     size_ = 0;
-    //     capacity_ = 0;
-    //     delete[] str_;
-    //     str_ = nullptr;
-    //     return;
-    // }
     auto new_str = new char[size_ + 1];
     for (size_t i = 0; i < size_; ++i) {
         new_str[i] = str_[i];
