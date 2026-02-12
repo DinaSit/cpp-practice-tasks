@@ -5,10 +5,10 @@
 
 #include <stdexcept>
 
-class BadWeakPtr : std::runtime_error {
- public:
-  BadWeakPtr() : std::runtime_error("BadWeakPtr") {
-  }
+class BadWeakPtr : public std::runtime_error {
+  public:
+    BadWeakPtr() : std::runtime_error("BadWeakPtr") {
+    }
 };
 
 struct Counter {
@@ -24,29 +24,28 @@ class WeakPtr;
 
 template <class T>
 class SharedPtr {
-    T* ptr_;
-    Counter* cnt_;
+  T* ptr_;
+  Counter* cnt_;
 
-    void Unlink() {
-      if (!cnt_) {
-        ptr_ = nullptr;
-        return;
-      }
-
-      Counter* c = cnt_;
-      T* p = ptr_;
-      cnt_ = nullptr;
+  void Unlink() {
+    if (!cnt_) {
       ptr_ = nullptr;
+      cnt_ = nullptr;
+      return;
+    }
 
-      if (--c->strong == 0) {
-        if (c->weak == 0) {
-            delete p;
-            delete c;
-        } else {
-            delete p;
-        }
+    Counter* c = cnt_;
+    T* p = ptr_;
+    cnt_ = nullptr;
+    ptr_ = nullptr;
+
+    if (--c->strong == 0) {
+      delete p;
+      if (c->weak == 0) {
+        delete c;
       }
     }
+  }
 
 public:
   template <class A>
@@ -110,7 +109,7 @@ public:
   }
 
   // Метод Swap(SharedPtr<T>&);
-  void Swap(SharedPtr& other) {
+  void Swap(SharedPtr& other) noexcept {
     std::swap(ptr_, other.ptr_);
     std::swap(cnt_, other.cnt_);
   }
@@ -244,13 +243,15 @@ public:
   }
 
   // Метод Lock(), возвращающий SharedPtr на объект (если Expired() == true, то возвращается пустой указатель);
+  // атомарная операция для проверки на просрченность std::weak_ptr
   SharedPtr<T> Lock() const {
+    if (Expired()) {
+      return SharedPtr<T>();
+    }
     SharedPtr<T> shared;
     shared.ptr_ = ptr_;
     shared.cnt_ = cnt_;
-    if (cnt_ != nullptr) {
-      cnt_->strong += 1;
-    }
+    cnt_->strong += 1;
     return shared;
   }
 
