@@ -11,26 +11,27 @@ class BadAnyCast : public std::bad_cast {
   }
 };
 
-struct IHolder {
-  virtual ~IHolder() = default;
-  virtual std::unique_ptr<IHolder> Clone() const = 0;
-};
-
-// структурка, хранящая в себе любой тип данных
-template <class T>
-struct AnyHolder : public IHolder {
-  T value;
-
-  explicit AnyHolder(const T& x) : value(x) {
-  }
-
-  std::unique_ptr<IHolder> Clone() const override {
-    return std::make_unique<AnyHolder<T>>(value);
-  }
-};
-
 class Any {
-  std::unique_ptr<IHolder> ptr_ = std::unique_ptr<IHolder>();
+
+  struct IHolder {
+    virtual ~IHolder() = default;
+    virtual std::unique_ptr<IHolder> Clone() const = 0;
+  };
+
+  // структурка, хранящая в себе любой тип данных
+  template <class T>
+  struct AnyHolder final : IHolder {
+    T value;
+
+    explicit AnyHolder(const T& x) : value(x) {
+    }
+
+    std::unique_ptr<IHolder> Clone() const override {
+      return std::make_unique<AnyHolder<T>>(value);
+    }
+  };
+
+  std::unique_ptr<IHolder> ptr_;
 
 public:
   Any() = default;
@@ -79,14 +80,14 @@ public:
     return ptr_ != nullptr;
   }
 
-  template <class T>
+  template <class T> 
   friend T AnyCast(const Any& any);
 };
 
 // Внешняя шаблонная функция, которая возвращает значение, в случае, если IHolder указывает на AnyHolder<T> и бросает BadAnyCast в противном случае
 template <class T> 
 T AnyCast(const Any& any) {
-  auto* anyholder_ptr = dynamic_cast<AnyHolder<T>*>(any.ptr_.get());
+  auto* anyholder_ptr = dynamic_cast<const Any::AnyHolder<T>*>(any.ptr_.get());
   if (anyholder_ptr != nullptr) {
     return anyholder_ptr->value;
   }
